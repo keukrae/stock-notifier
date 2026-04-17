@@ -1,5 +1,4 @@
 import os
-import requests
 from flask import Flask, request, jsonify
 from notion_client import Client
 
@@ -7,34 +6,6 @@ app = Flask(__name__)
 
 NOTION_TOKEN = os.environ.get("NOTION_TOKEN")
 NOTION_DB_ID = os.environ.get("NOTION_DB_ID")
-
-
-def get_naver_stock_url(stock_name: str) -> str:
-    """네이버 금융에서 종목명으로 종목코드를 자동 검색해서 URL 반환"""
-    try:
-        search_url = "https://ac.finance.naver.com/ac"
-        params = {
-            "q": stock_name,
-            "q_enc": "UTF-8",
-            "target": "stock"
-        }
-        headers = {"User-Agent": "Mozilla/5.0"}
-        res = requests.get(search_url, params=params, headers=headers, timeout=5)
-        data = res.json()
-
-        # 결과에서 첫 번째 종목코드 추출
-        items = data.get("items", [])
-        if items and items[0]:
-            first = items[0][0]
-            # first 형식: ["종목명", "코드", ...]
-            code = first[1] if len(first) > 1 else None
-            if code:
-                return f"https://finance.naver.com/item/main.naver?code={code}"
-    except Exception:
-        pass
-
-    # 실패하면 검색 페이지로 폴백
-    return f"https://finance.naver.com/search/searchList.naver?query={stock_name}"
 
 
 def search_notion(stock_name: str):
@@ -70,7 +41,7 @@ def search_notion(stock_name: str):
     if "날짜" in props and props["날짜"]["date"]:
         date_str = props["날짜"]["date"]["start"]
 
-    # 4. 페이지 본문 블록 전체 읽기
+    # 4. 페이지 본문 블록 전체 읽기 (모든 텍스트 그대로)
     blocks = notion.blocks.children.list(block_id=page_id)
     body_lines = []
     for block in blocks["results"]:
@@ -102,8 +73,8 @@ def query():
             "message": f"'{stock_name}' 을 노션 DB에서 찾을 수 없습니다"
         }), 404
 
-    # 네이버 금융 종목코드 자동 검색
-    naver_url = get_naver_stock_url(stock_name)
+    # 네이버 금융 검색 URL
+    naver_url = f"https://finance.naver.com/search/search.naver?query={stock_name}"
 
     # 단축어 화면에 표시할 텍스트 구성
     lines = []
