@@ -114,4 +114,3 @@ def health():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
-여기서 네이버 금융의 url이 잘못된거 같은데? 확인해봐
