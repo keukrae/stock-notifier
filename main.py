@@ -1,4 +1,4 @@
-Import os
+import os
 from flask import Flask, request, jsonify
 from notion_client import Client
 
