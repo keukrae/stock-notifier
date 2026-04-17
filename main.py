@@ -1,4 +1,4 @@
-import os
+Import os
 from flask import Flask, request, jsonify
 from notion_client import Client
 
@@ -74,7 +74,7 @@ def query():
         }), 404
 
     # 네이버 금융 검색 URL
-    naver_url = f"https://finance.naver.com/search/searchList.naver?query={stock_name}"
+    naver_url = f"https://finance.naver.com/search/search.naver?query={stock_name}"
 
     # 단축어 화면에 표시할 텍스트 구성
     lines = []
@@ -114,3 +114,4 @@ def health():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+여기서 네이버 금융의 url이 잘못된거 같은데? 확인해봐
